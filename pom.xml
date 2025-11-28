@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.2</version>
+		<version>3.5.7</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.hum</groupId>
@@ -16,7 +16,18 @@
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
-	</properties>
+        <liquibase.plugin.version>4.33.0</liquibase.plugin.version>
+        <apache.commons.version>3.20.0</apache.commons.version>
+        <jsonwebtoken.version>0.11.5</jsonwebtoken.version>
+        <jasperreports.version>7.0.3</jasperreports.version>
+
+        <liquibase.plugin.properties.database>${liquibase.plugin.properties.database}</liquibase.plugin.properties.database>
+	    <liquibase.plugin.changelog>src/main/resources/db/changelog/00-changelog-master.xml</liquibase.plugin.changelog>
+        <liquibase.plugin.properties.targetDatabase>xseed</liquibase.plugin.properties.targetDatabase>
+        <liquibase.plugin.liquibaseSchemaName>xseed</liquibase.plugin.liquibaseSchemaName>
+        <liquibase.plugin.properties.database>${liquibase.plugin.properties.targetDatabase}</liquibase.plugin.properties.database>
+        <liquibase.plugin.schemaName>xseed</liquibase.plugin.schemaName>
+    </properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -33,45 +44,63 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
-			<version>0.11.5</version>
+			<version>${jsonwebtoken.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-impl</artifactId>
-			<version>0.11.5</version>
+			<version>${jsonwebtoken.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-jackson</artifactId>
-			<version>0.11.5</version>
+			<version>${jsonwebtoken.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>6.20.0</version>
+			<version>${jasperreports.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -79,11 +108,19 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.plugin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${apache.commons.version}</version>
+        </dependency>
+
 	</dependencies>
 
 	<build>
@@ -92,6 +129,18 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>${liquibase.plugin.version}</version>
+                <configuration>
+                    <url>jdbc:mysql://localhost:3306/xseed</url>
+                    <driver>com.mysql.cj.jdbc.Driver</driver>
+                    <username>root</username>
+                    <password>admin</password>
+                    <outputChangeLogFile>src/main/resources/db/changelog/output-changelog.xml</outputChangeLogFile>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 
